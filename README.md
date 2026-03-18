@@ -38,6 +38,9 @@ Traditional antivirus scanners rely on static file signatures. Against modern fi
 | ❌ Visible, bypassable | ✅ Runs as invisible background daemon |
 
 ---
+<img width="2816" height="1536" alt="Gemini_Generated_Image_ks7khwks7khwks7k" src="https://github.com/user-attachments/assets/2f835894-05c1-47ea-90a8-f8ca37650462" />
+
+
 
 ## 🧬 The Three Core Engines
 
