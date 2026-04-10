@@ -1,301 +1,240 @@
-# 👁️ VGT Malware Hunter X-Ray — Community Edition
+# 🔬 VGT Malware Hunter X-Ray (MHX) — Experimental Windows EDR (R&D Project)
 
-[![License](https://img.shields.io/badge/License-AGPLv3-green?style=for-the-badge)](LICENSE)
-[![Platform](https://img.shields.io/badge/Platform-Windows-0078D4?style=for-the-badge&logo=windows)](https://microsoft.com/windows)
-[![PowerShell](https://img.shields.io/badge/PowerShell-5.1+-5391FE?style=for-the-badge&logo=powershell)](https://microsoft.com/powershell)
-[![Edition](https://img.shields.io/badge/Edition-Community_Lite-orange?style=for-the-badge)](#)
-[![Type](https://img.shields.io/badge/Type-Behavioral_EDR-red?style=for-the-badge)](#)
-[![Status](https://img.shields.io/badge/Status-STABLE-brightgreen?style=for-the-badge)](#)
+[![License: AGPLv3](https://img.shields.io/badge/License_(MHX)-AGPLv3-green?style=for-the-badge)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License_(C%23_Core)-MIT-blue?style=for-the-badge)](LICENSE-MIT)
+[![Platform](https://img.shields.io/badge/Platform-Windows_10%2F11-0078D6?style=for-the-badge&logo=windows)](https://microsoft.com)
+[![Version](https://img.shields.io/badge/Version-3.1_PLATIN-brightgreen?style=for-the-badge)](#)
+[![Status](https://img.shields.io/badge/Status-R%26D_/_Experimental-yellow?style=for-the-badge)](#)
 [![VGT](https://img.shields.io/badge/VGT-VisionGaia_Technology-red?style=for-the-badge)](https://visiongaiatechnology.de)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-00457C?style=for-the-badge&logo=paypal)](https://www.paypal.com/paypalme/dergoldenelotus)
 
-> *"Signatures are dead. Watch the behavior."*
-> *AGPLv3 — For Humans, not for SaaS Corporations.*
+> *AGPLv3 (MHX Core) / MIT (C# Native Engine) — Open Source. Open Knowledge.*
 
 ---
 
 ## ⚠️ DISCLAIMER: EXPERIMENTAL R&D PROJECT
 
-This project is a **Proof of Concept (PoC)** Windows Security Layer. It is **not** a Enterprise System, and can be unsafe.
+VGT Malware Hunter X-Ray is a **Proof of Concept (PoC)** exploring behavioral endpoint detection using PowerShell, .NET/C# interop, and Windows native APIs. It is **not** a replacement for enterprise EDR solutions.
 
-**Do not use this in critical production environments.** For enterprise-grade kernel-level protection, we recommend established Solutions.
+**Architectural limitations to be aware of:**
 
+- Runs as a PowerShell daemon — subject to PowerShell execution constraints and startup latency
+- Detection runs on a 2-second polling interval — real-time kernel-level hooks are not implemented
+- Process termination via `Stop-Process` can be circumvented by sufficiently privileged malware
+- The AMSI integrity check relies on known patch signatures — novel bypass techniques may go undetected
 
-## ⚠️ Community Lite Edition
-
-> **This is the Community Lite Edition** — the open-source foundation of our internal EDR architecture, released to give Blue Teams a powerful behavioral detection baseline.
->
-> The full **VGT MHX Enterprise Tier** — including SeDebugPrivilege Token Injection, Memory God-Mode, Zero-Trust Path Validation, and advanced heuristics — is deployed internally on our TIER-5 Sovereign systems and is **not publicly available.**
->
-> This release is intentional. The foundation is real. The ceiling is yours to build.
+**For production environments**, we recommend established solutions like Microsoft Defender for Endpoint, CrowdStrike, or SentinelOne alongside this tool — not instead of them.
 
 ---
 
-## 🚨 Why Traditional AV Is Dead
+## 💎 Support the Project
 
-Traditional antivirus scanners rely on static file signatures. Against modern fileless malware and Living off the Land (LotL) attacks, they are completely blind.
+[![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-00457C?style=for-the-badge&logo=paypal)](https://www.paypal.com/paypalme/dergoldenelotus)
 
-| Traditional AV | VGT MHX Community Edition |
+| Method | Address |
 |---|---|
-| ❌ Static file signatures | ✅ Pure behavioral analysis |
-| ❌ Blind to fileless attacks | ✅ Detects in-memory execution |
-| ❌ No process lineage tracking | ✅ Strict parent-child enforcement |
-| ❌ No LotL detection | ✅ Live argument monitoring |
-| ❌ No C2 network correlation | ✅ Real-time threat feed matching |
-| ❌ Visible, bypassable | ✅ Runs as invisible background daemon |
-
----
-<img width="2816" height="1536" alt="Gemini_Generated_Image_ks7khwks7khwks7k" src="https://github.com/user-attachments/assets/2f835894-05c1-47ea-90a8-f8ca37650462" />
-
-
-
-## 🧬 The Three Core Engines
-
-### Engine 1 — Strict Lineage Tracking
-Detects **Process Hollowing** and **Injection** in real-time by enforcing parent-child process rules.
-
-```
-winword.exe spawns cmd.exe
-    → Lineage rule violated
-    → Process terminated before payload executes
-    → Incident logged to Windows Event Log
-```
-
-Legitimate processes have predictable parent relationships. Malware breaks these rules. MHX enforces them.
-
-### Engine 2 — Living off the Land (LotL) Prevention
-Monitors process arguments live. Encoded or obfuscated PowerShell commands outside of admin sessions are terminated immediately.
-
-```
-powershell.exe -enc <base64payload>
-    → LotL signature detected
-    → Process terminated
-    → Toast notification fired
-```
-
-Attackers love using built-in Windows tools — `powershell.exe`, `cmd.exe`, `wscript.exe` — to avoid detection. MHX watches the arguments, not just the binary.
-
-### Engine 3 — Zero-Trust Network Monitor
-Continuously correlates all established TCP connections against global C2 threat intelligence feeds. If a process phones home to a known C2 server, the socket owner is killed.
-
-```
-chrome.exe → ESTABLISHED → 185.220.101.47 (known C2)
-    → Process terminated
-    → C2 connection severed
-    → Incident logged
-```
-
-Feeds updated every 12 hours automatically via background job.
+| **PayPal** | [paypal.me/dergoldenelotus](https://www.paypal.com/paypalme/dergoldenelotus) |
+| **Bitcoin** | `bc1q3ue5gq822tddmkdrek79adlkm36fatat3lz0dm` |
+| **ETH / USDT (ERC-20)** | `0xD37DEfb09e07bD775EaaE9ccDaFE3a5b2348Fe85` |
 
 ---
 
-## 🏛️ Architecture
+## 🔬 What is VGT MHX?
+
+VGT Malware Hunter X-Ray started as an experiment: **Can we build a meaningful behavioral EDR daemon using only PowerShell + C# interop, running as a background system tray process?**
+
+Version 3.1 is the current peak of this exploration. It combines four detection engines operating in a unified 2-second heartbeat loop — process lineage validation, command-line heuristics, network threat intelligence, and native AMSI memory integrity scanning via `ReadProcessMemory`.
 
 ```
-Windows System Timer (3s heartbeat)
-    ↓
-ENGINE 1: Lineage Tracking
-    → Get-CimInstance Win32_Process
-    → Validate parent-child relationships
-    → Terminate on violation → Log → Toast
-    ↓
-ENGINE 2: LotL Detection
-    → Get-Process with CommandLine filter
-    → Match suspicious argument patterns
-    → Terminate on match → Log → Toast
-    ↓
-ENGINE 3: C2 Network Monitor
-    → Get-NetTCPConnection (ESTABLISHED)
-    → Cross-reference against ThreatIPs hashtable
-    → Terminate on match → Log → Toast
-    ↓
-BACKGROUND JOB: TI Sync (every 12h)
-    → Feodo Tracker
-    → Spamhaus DROP
-    → [Community: add more feeds]
-    ↓
-SYSTEM TRAY: Persistent daemon
-    → Invisible mode (hidden window)
-    → Right-click → View Incident Log
-    → Right-click → Exit
+The goal was never to replace kernel-level EDR.
+The goal was to understand what is possible in userspace — and where the ceiling is.
 ```
 
 ---
 
-## 🖥️ System Tray Integration
+## 🛡️ Detection Engines
 
-MHX runs completely invisible. No console window. No taskbar entry. Only a system tray icon confirms it is active.
+### Engine 1 — Process Lineage Validation
+Enforces strict parent-child process relationships for critical system processes. A `lsass.exe` spawned by anything other than `wininit.exe` is terminated immediately.
 
-```
-System Tray Icon → Right-click:
-    ├── View Incident Log    ← Opens incidents.log in Notepad
-    ├── ─────────────────
-    └── Exit MHX            ← Clean shutdown
-```
+### Engine 2 — KillerDom Command-Line Heuristics
+Compiled regex signatures scan process command-line arguments for known malicious patterns: obfuscated PowerShell, Base64-encoded payloads, JNDI injection strings, cryptocurrency miners, and Living-off-the-Land (LotL) abuse patterns.
 
-**Toast Notifications** fire immediately on any detection:
+### Engine 3 — Network & Threat Intelligence
+Monitors established TCP connections against live threat feeds (Feodo Tracker, Spamhaus DROP/EDROP, CINS Score). Untrusted processes with external connections that fail path and whitelist validation are terminated. Masquerading detection via path verification.
 
-```
-⚠️ MHX: Lineage Breach
-Process cmd.exe terminated (Invalid Parent: winword.exe)
+### Engine 4 — AMSI Memory Integrity Scanner
+Uses `ReadProcessMemory` via P/Invoke to inspect the in-memory bytes of `AmsiScanBuffer` in all high-risk LotL processes. Detects known AMSI bypass techniques at the memory level:
 
-⚠️ MHX: LotL Activity  
-powershell.exe terminated due to suspicious arguments.
-
-⚠️ MHX: C2 Connection Blocked
-Target IP: 185.220.101.47
-```
+| Byte Signature | Technique |
+|---|---|
+| `B8 57 00 07 80` | `mov eax, 0x80070057` — returns `E_INVALIDARG` |
+| `EB` / `E9` | Unconditional JMP — hooks/redirects scan function |
+| `C3` | `RET` — immediate return, skips scan entirely |
+| `31 C0 C3` | `xor eax, eax; ret` — returns clean result without scanning |
 
 ---
 
-## 🚀 Installation
+## 🗺️ MITRE ATT&CK Coverage
+
+| Technique ID | Technique Name | Engine |
+|---|---|---|
+| **T1055** | Process Injection | Engine 4 (AMSI Memory Scan) |
+| **T1548.002** | Abuse Elevation Control — Bypass UAC | Engine 1 (Lineage) |
+| **T1134** | Access Token Manipulation | Engine 1 (Lineage) |
+| **T1036** | Masquerading | Engine 3 (Path Verification) |
+| **T1036.005** | Match Legitimate Name or Location | Engine 3 |
+| **T1059.001** | Command & Scripting — PowerShell | Engine 2 (KillerDom) |
+| **T1059.003** | Command & Scripting — Windows Command Shell | Engine 2 (KillerDom) |
+| **T1027** | Obfuscated Files or Information | Engine 2 (Base64/Hex Detection) |
+| **T1027.010** | Command Obfuscation | Engine 2 (KillerDom) |
+| **T1218** | System Binary Proxy Execution (LotL) | Engine 2 (KillerDom) |
+| **T1218.005** | Mshta | Engine 2 |
+| **T1218.010** | Regsvr32 | Engine 2 |
+| **T1218.011** | Rundll32 | Engine 2 |
+| **T1105** | Ingress Tool Transfer (certutil/bitsadmin) | Engine 2 (KillerDom) |
+| **T1071** | Application Layer Protocol (C2) | Engine 3 (TI Feeds) |
+| **T1071.001** | Web Protocols — C2 Beaconing | Engine 3 |
+| **T1562.001** | Impair Defenses — Disable or Modify Tools | Engine 4 (AMSI Patch) |
+| **T1055.001** | DLL Injection | Engine 3 (Temp DLL Detection) |
+| **T1547.001** | Boot/Logon Autostart — Registry Run Keys | Scheduled Task Persistence |
+| **T1078** | Valid Accounts (Credential Theft via LSASS) | Engine 1 (lsass Lineage Guard) |
+
+---
+
+## ⚙️ Installation & Configuration
 
 ### Requirements
-- Windows 10 / 11
+
+- Windows 10 / Windows 11
 - PowerShell 5.1+
-- Administrator privileges
+- Administrator privileges (required for `SeDebugPrivilege` and `ReadProcessMemory`)
+- .NET Framework 4.x (pre-installed on all modern Windows)
 
-### Setup
+### Step 1 — Configure your Whitelist
+
+> **⚠️ Do this before running. The network engine will terminate untrusted processes with external connections.**
+
+Open the script and locate the `VGT CONFIGURATION` section:
 
 ```powershell
-# 1. Clone or download
-git clone https://github.com/visiongaiatechnology/winxdr.git
-cd winxdr
-
-# 2. Run as Administrator (right-click → Run as Administrator)
-# Or via PowerShell:
-Set-ExecutionPolicy Bypass -Scope Process -Force
-.\xdr-communitylite.ps1
+# --- VGT CONFIGURATION ---
+$Script:WhitelistedNetworkProcs = @(
+    "chrome", "firefox", "msedge",   # Browsers
+    "VSCodium", "code",               # Editors
+    "ollama",                         # Local AI
+    "svchost", "MpDefenderCoreService", "MsMpEng",  # System
+    "Discord", "Spotify", "Telegram"  # Apps
+    # ADD YOUR OWN SOFTWARE HERE
+)
 ```
 
-MHX auto-elevates if not already running as Administrator. The console window hides itself automatically. Check your system tray for the active icon.
+Add any process names you want to whitelist. Use the exact process name as shown in Task Manager (without `.exe`).
 
-### Incident Logs
+### Step 2 — Configure Threat Intelligence Feeds
 
-All detections are written to:
-```
-C:\ProgramData\MHX_Community\incidents.log
-```
+Locate the `THREAT INTELLIGENCE FUNCTIONS` section and add or replace feed URLs as needed:
 
-And to the Windows Event Log under source `MHX-Community`.
-
----
-
-## 🔧 Configuration & Contribution
-
-The Community Edition is designed to be extended. Three key areas for contributors:
-
-### 1. Extend the Lineage Matrix
-```powershell
-$Script:StrictLineage = @{
-    "cmd.exe"        = @("explorer.exe", "powershell.exe")
-    # Add your rules:
-    "powershell.exe" = @("explorer.exe", "services.exe", "svchost.exe")
-    "wscript.exe"    = @("explorer.exe")
-    "mshta.exe"      = @("explorer.exe")
-}
-```
-
-### 2. Add Threat Intelligence Feeds
 ```powershell
 $feeds = @(
     "https://feodotracker.abuse.ch/downloads/ipblocklist.txt",
     "https://www.spamhaus.org/drop/drop.txt",
-    # Add your feeds here:
-    "https://rules.emergingthreats.net/fwrules/emerging-Block-IPs.txt",
+    "https://www.spamhaus.org/drop/edrop.txt",
     "https://cinsscore.com/list/ci-badguys.txt"
+    # ADD YOUR OWN THREAT INTEL FEEDS HERE (plain IP list format)
 )
 ```
 
-### 3. Extend the Network Whitelist
+Feeds are synced every 4 hours in a background job. Any feed returning plain-text IPv4 addresses (one per line) is supported.
+
+### Step 3 — Run
+
 ```powershell
-$Script:WhitelistedNetworkProcs = @(
-    "chrome", "firefox", "msedge", "svchost",
-    # Add trusted processes for your environment:
-    "Teams", "Slack", "zoom"
-)
+# Right-click → Run with PowerShell (as Administrator)
+# Or from an elevated terminal:
+powershell.exe -ExecutionPolicy Bypass -File .\vgt-mhx.ps1
 ```
 
+The daemon will:
+1. Auto-elevate to Administrator if not already elevated
+2. Hide its own console window
+3. Register a Scheduled Task (`VGT-MHX`) for autostart on login
+4. Appear in the system tray
+5. Start the 4-hour TI feed sync immediately
+
+### System Tray Controls
+
+Right-click the tray icon to:
+- **Open Incident Log** — view all detections in Notepad
+- **Stop Hunter** — cleanly shut down the daemon
+
 ---
 
-## 📦 System Specs
+## 📋 Incident Log
 
+All detections are written to:
 ```
-RUNTIME           PowerShell 5.1+ (native Windows)
-DETECTION         Pure behavioral — no signatures
-HEARTBEAT         3 seconds
-TI_SYNC           Every 12 hours (background job)
-VISIBILITY        Zero — hidden window, system tray only
-LOGGING           Windows Event Log + flat file
-INCIDENT_PATH     C:\ProgramData\MHX_Community\incidents.log
-ELEVATION         Auto-elevates if not admin
-OVERHEAD          Minimal — timer-based, no continuous polling
+C:\ProgramData\VGT_Omega\incidents.log
 ```
 
----
+And to the Windows Event Log under:
+```
+Source: VGT-MHX
+Log:    Application
+```
 
-## 🔒 What's NOT in This Edition
-
-This Community Lite Edition intentionally excludes the following features from our internal Enterprise build:
-
-| Feature | Community Edition | Enterprise Tier |
-|---|---|---|
-| Behavioral Engine | ✅ Core 3 engines | ✅ Extended heuristics |
-| Lineage Tracking | ✅ Basic ruleset | ✅ Full Windows process tree |
-| LotL Detection | ✅ Keyword matching | ✅ Semantic analysis |
-| C2 Detection | ✅ 2 feeds | ✅ 10+ feeds incl. APT trackers |
-| SeDebugPrivilege Injection | ❌ | ✅ God-Mode process access |
-| Memory Analysis | ❌ | ✅ In-memory scan |
-| Zero-Trust Path Validation | ❌ | ✅ Full executable path trust chain |
-| DLL Injection Detection | ❌ | ✅ Module path analysis |
-
-> The Enterprise Tier runs on our TIER-5 Sovereign systems. It is not publicly available.
-
----
-
-## 🤝 Contributing
-
-This is a community project. Pull requests are welcome — especially:
-
-- New lineage rules for common attack vectors
-- Additional threat intelligence feed integrations
-- LotL keyword pattern improvements
-- Documentation and test cases
-
-For security vulnerability reports, please contact: `security@visiongaiatechnology.de`
-
-Licensed under **AGPLv3** — *"For Humans, not for SaaS Corporations."*
-
----
-
-## 🔗 VGT Windows Security Ecosystem
-
-| Tool | Purpose |
+| Event ID | Meaning |
 |---|---|
-| 👁️ **VGT MHX Community Edition** | Behavioral EDR daemon — watches process behavior |
-| 🔍 **[VGT Civilian Checker](https://github.com/visiongaiatechnology/Winsyssec)** | Security posture audit — shows WHERE you are vulnerable |
-| 🔥 **[VGT Windows Firewall Burner](https://github.com/visiongaiatechnology/vgt-windows-burner)** | 280,000+ APT IPs burned into Windows Firewall |
-
-> **Recommended stack:** Civilian Checker to audit → Firewall Burner to block known threats → MHX to watch behavior.
-
----
-
-## ☕ Support the Project
-
-VGT MHX Community Edition is free. If it catches something on your system:
-
-[![Donate via PayPal](https://img.shields.io/badge/Donate-PayPal-00457C?style=for-the-badge&logo=paypal)](https://www.paypal.com/paypalme/dergoldenelotus)
+| `202` | Untrusted process with external network connection |
+| `203` | Masquerading detected — known process name, wrong path |
+| `204` | Suspicious DLL loaded from Temp directory |
+| `301` | Critical process lineage breach |
+| `666` | KillerDom strike — malicious command-line detected |
+| `999` | AMSI memory patch detected and process neutralized |
 
 ---
 
-## 🏢 Built by VisionGaia Technology
+## 📜 License
+
+This project uses a dual-license model:
+
+| Component | License |
+|---|---|
+| **MHX Core** (PowerShell daemon, detection engines, TI sync) | **AGPLv3** |
+| **C# Native Engine** (`VGT.Security.XDR` — `Win32TokenXDR`, `MemoryScanner`) | **MIT** |
+
+The C# core is MIT-licensed to allow embedding in other projects without AGPLv3 copyleft obligations.
+
+---
+
+## 📚 Learning Resources & Further Reading
+
+This project explores the boundaries of what PowerShell + P/Invoke can do for endpoint security. If you want to go deeper into the concepts implemented here:
+
+- **AMSI Internals:** [Microsoft AMSI Documentation](https://docs.microsoft.com/en-us/windows/win32/amsi/antimalware-scan-interface-portal)
+- **Process Injection Techniques:** [MITRE ATT&CK T1055](https://attack.mitre.org/techniques/T1055/)
+- **Living-off-the-Land Binaries:** [LOLBAS Project](https://lolbas-project.github.io/)
+- **Threat Intelligence Feeds:** [abuse.ch](https://abuse.ch/), [Spamhaus](https://www.spamhaus.org/)
+- **Next Steps (Kernel-Level):** eBPF, Windows ETW (Event Tracing for Windows), kernel callbacks via `PsSetCreateProcessNotifyRoutine`
+
+---
+
+## 🔗 VGT Windows Defense Ecosystem
+
+| Tool | Type | Purpose |
+|---|---|---|
+| 🔬 **VGT MHX** | **R&D / Experimental** | Behavioral EDR daemon — AMSI, Lineage, Network, KillerDom |
+| 🔥 **[VGT Windows Firewall Burner](https://github.com/visiongaiatechnology/vgt-windows-burner)** | **Preventive** | 280,000+ APT IPs blocked in native Windows Firewall |
+| 🔍 **[VGT Civilian Checker](https://github.com/visiongaiatechnology/Winsyssec)** | **Audit** | Windows security posture assessment |
+| ⚔️ **[VGT Auto-Punisher](https://github.com/visiongaiatechnology/vgt-auto-punisher)** | **Linux R&D** | Experimental userspace IDS for Linux servers |
+
+---
+
+## 🏢 About VisionGaia Technology
 
 [![VGT](https://img.shields.io/badge/VGT-VisionGaia_Technology-red?style=for-the-badge)](https://visiongaiatechnology.de)
 
-VisionGaia Technology builds enterprise-grade security and AI tooling — engineered to the DIAMANT VGT SUPREME standard.
-
-> *"We open-sourced the foundation. The ceiling is yours to build."*
+VisionGaia Technology is an R&D collective exploring experimental architectures, AI integration, and cybersecurity paradigms. We build to learn, we break things to understand them, and we share the results.
 
 ---
 
-*Version 1.0 (Community Lite Edition) — VGT Malware Hunter X-Ray // Behavioral EDR Daemon*
+*VGT Malware Hunter X-Ray v3.1 PLATIN — Experimental Windows EDR // Process Lineage + KillerDom + Network TI + AMSI Memory Integrity*
