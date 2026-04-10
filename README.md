@@ -14,6 +14,13 @@
 
 ---
 
+## ⚠️ DISCLAIMER: EXPERIMENTAL R&D PROJECT
+
+This project is a **Proof of Concept (PoC)** Wordpress Security Layer. It is **not** a Enterprise Plugin, and can be unsafe.
+
+**Do not use this in critical production environments.** For enterprise-grade kernel-level protection, we recommend established Solutions.
+
+
 ## ⚠️ Community Lite Edition
 
 > **This is the Community Lite Edition** — the open-source foundation of our internal EDR architecture, released to give Blue Teams a powerful behavioral detection baseline.
