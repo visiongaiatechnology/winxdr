@@ -16,7 +16,7 @@
 
 ## ⚠️ DISCLAIMER: EXPERIMENTAL R&D PROJECT
 
-This project is a **Proof of Concept (PoC)** Wordpress Security Layer. It is **not** a Enterprise Plugin, and can be unsafe.
+This project is a **Proof of Concept (PoC)** Windows Security Layer. It is **not** a Enterprise Plugin, and can be unsafe.
 
 **Do not use this in critical production environments.** For enterprise-grade kernel-level protection, we recommend established Solutions.
 
